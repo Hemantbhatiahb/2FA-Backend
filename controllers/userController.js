@@ -87,10 +87,10 @@ const loginUser = async (req, res) => {
     });
 
     res.cookie("token", token, {
-      httpOnly: false,
-      secure:false,
-      sameSite: "Lax",
-      maxAge: 24 * 60 * 60 * 1000, // Expires in 1 day
+      httpOnly: true,
+      secure: true, // ✅ Required for HTTPS
+      sameSite: "None", // ✅ Required for cross-origin cookies
+      maxAge: 24 * 60 * 60 * 1000, // 1 day expiry
     });
 
     return res.status(200).json({ success: true, message: "Login successful" });
@@ -202,10 +202,10 @@ const verify2FA = async (req, res) => {
     );
 
     res.cookie("token", token, {
-      httpOnly: false,
-      secure:false,
-      sameSite: "Lax",
-      maxAge: 24 * 60 * 60 * 1000, // Expires in 1 day
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     return res.status(200).json({
@@ -362,7 +362,7 @@ const getCurrentUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const {userId} = req.params;
+    const { userId } = req.params;
     if (!userId) {
       return res
         .status(200)
@@ -391,7 +391,7 @@ const changePassword = async (req, res) => {
     const { userId, oldPassword, newPassword } = req.body;
     const user = await User.findById(userId);
 
-    if(!userId || !oldPassword || !newPassword ) {
+    if (!userId || !oldPassword || !newPassword) {
       return res
         .status(200)
         .json({ success: false, message: "Fields are missing" });
