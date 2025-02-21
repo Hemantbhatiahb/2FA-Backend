@@ -15,6 +15,8 @@ const {
   updateUser
 } = require("../controllers/userController");
 const auth = require("../middlewares/authMiddleware");
+const rateLimiter = require("../utils/rateLimitService");
+
 
 const userRouter = express.Router();
 
@@ -31,7 +33,7 @@ userRouter.post("/verify-2fA", verify2FA);
 userRouter.post("/disable-2fa", disable2FA);
 
 
-userRouter.post("/login", loginUser);
+userRouter.post("/login",rateLimiter(10 * 60 * 1000, 5, "Too many login attempts. Try again later."), loginUser);
 userRouter.post('/logout', logoutUser);
 userRouter.post('/forgot-password', forgotPassword)
 userRouter.post('/reset-password', resetPassword);
